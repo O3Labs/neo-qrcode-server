@@ -65,22 +65,27 @@ function getResizedLogo({
 }
 
 export default function generate({uri, logoUrl, qrCodeOptions, ratio}) {
+  console.log('generate')
   return createQRCode(uri, qrCodeOptions)
-  .then(img => Promise.all([
-    img,
-    getResizedLogo({
-      src: './assets/blankSquare.png',
-      w: Math.floor(img.bitmap.width / (ratio - 0.5)),
-      h: Math.floor(img.bitmap.height / (ratio - 0.5)),
-      isLocal: true,
-    }),
-    getResizedLogo({
-      src: logoUrl,
-      w: Math.floor(img.bitmap.width / ratio),
-      h: Math.floor(img.bitmap.height / ratio),
-    }),
-  ]))
+  .then(img => {
+    console.log('createQRCode')
+    return Promise.all([
+      img,
+      getResizedLogo({
+        src: './assets/blankSquare.png',
+        w: Math.floor(img.bitmap.width / (ratio - 0.5)),
+        h: Math.floor(img.bitmap.height / (ratio - 0.5)),
+        isLocal: true,
+      }),
+      getResizedLogo({
+        src: logoUrl,
+        w: Math.floor(img.bitmap.width / ratio),
+        h: Math.floor(img.bitmap.height / ratio),
+      }),
+    ])
+  })
   .then(data => {
+    console.log('getResizedLogo & getResizedLogo')
     const img = data[0]
     const logoBg = data[1]
     const logo = data[2]
@@ -98,8 +103,11 @@ export default function generate({uri, logoUrl, qrCodeOptions, ratio}) {
     const qrImg = qrBgImg.composite(logo, x, y);
 
     return new Promise((resolve, reject) => {
+      console.log('getBuffer before')
       qrImg.getBuffer(Jimp.MIME_PNG, (err, buf) => {
+        console.log('getBuffer after')
         if (err) return rej(err);
+        console.log('getBuffer fine')
         return resolve(buf);
       });
     });

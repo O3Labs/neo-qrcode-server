@@ -1,0 +1,12 @@
+service: neo-qrcode
+provider:
+  name: aws
+  region: ap-northeast-1
+  runtime: nodejs8.10
+functions:
+  hello:
+    handler: handler.hello
+    events:
+     - http:
+        path: /
+        method: get

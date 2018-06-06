@@ -1,6 +1,5 @@
 import express from 'express';
-import { generateUri } from './nep9';
-import generateQrCode from './qrcode';
+import { generateUri, generateQrCode } from './src'
 
 const app = express();
 
@@ -18,7 +17,7 @@ app.get('/:address', function (req, res) {
 
 	let uri = generateUri(address, properties);
   console.log(uri);
-  
+
   if (!uri) {
     res.sendStatus(404);
   } else {

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node server.js"
+    "start": "babel-node server.js",
+    "build": "./node_modules/.bin/rollup -c"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,10 @@
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-source-map-support": "^2.0.1",
     "babel-preset-env": "^1.7.0",
-    "babelrc-rollup": "^3.0.0"
+    "babelrc-rollup": "^3.0.0",
+    "rollup": "^0.60.0",
+    "rollup-plugin-babel": "^3.0.4",
+    "serverless-apigw-binary": "^0.4.4",
+    "serverless-apigwy-binary": "^0.1.0"
   }
 }
