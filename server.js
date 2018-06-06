@@ -17,12 +17,13 @@ app.get('/:address', function (req, res) {
 	const properties = req.query;
 
 	let uri = generateUri(address, properties);
-  console.log('hey', uri)
+  console.log(uri);
+  
   if (!uri) {
     res.sendStatus(404);
   } else {
 
-    const logoUrl = 'https://cdn.o3.network/img/nep5icons/APH.png';
+    const logoUrl = 'https://cdn.o3.network/img/nep5icons/NEO.png';
 
     const options = {
       uri,
