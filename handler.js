@@ -44,7 +44,7 @@ module.exports.hello = (event, context, callback) => {
     .then(imgBuffer => {
 
       const response = {
-        "isBase64Encoded": false,
+        // "isBase64Encoded": true,
         "statusCode": 200,
         "headers": { 'Content-Type': 'image/png' },
         "body": imgBuffer.toString('base64')
@@ -63,6 +63,7 @@ module.exports.hello = (event, context, callback) => {
       callback(null, response);
     })
     .catch(err => {
+      console.log('catch', err)
       callback(null, {
         statusCode: 404,
         headers: { 'Content-Type': 'text/plain' },
