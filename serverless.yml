@@ -2,7 +2,6 @@ service: neo-qrcode-1
 
 plugins:
     - serverless-apigw-binary
-    - serverless-apigwy-binary
 
 custom:
     apigwBinary:
@@ -19,6 +18,5 @@ functions:
         handler: handler.hello
         events:
             - http:
-                  path: /frog
+                  path: /{address}
                   method: get
-                  contentHandling: CONVERT_TO_BINARY

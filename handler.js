@@ -18,8 +18,9 @@ module.exports.hello = (event, context, callback) => {
     body: 'Invalid URI parameters'
   };
 
-  const address = 'AKcm7eABuW1Pjb5HsTwiq7iARSatim9tQ6';
+  const address = event.pathParameters.address;
   const properties = event.queryStringParameters;
+  const asset = properties && properties.asset;
 
   let uri = neoQrCodeNode.generateUri(address, properties);
 
@@ -30,12 +31,11 @@ module.exports.hello = (event, context, callback) => {
       body: 'Invalid URI parameters'
     });
   } else {
-    console.log('nicktest', uri)
-    const logoUrl = 'https://cdn.o3.network/img/nep5icons/NEO.png';
+    console.log(uri)
 
     const options = {
       uri,
-      logoUrl,
+      asset,
       qrCodeOptions,
       ratio,
     };
@@ -50,20 +50,10 @@ module.exports.hello = (event, context, callback) => {
         "body": imgBuffer.toString('base64')
       }
 
-      // const response = {
-      //   statusCode: 200,
-      //   headers: {
-      //     'Content-Type': 'image/png',
-      //     // 'Cache-Control': `public, max-age=${maxAge}`
-      //   },
-      //   body: imgBuffer.toString('base64'),
-      //   isBase64Encoded: true
-      // };
-
       callback(null, response);
     })
     .catch(err => {
-      console.log('catch', err)
+      console.log('QR Code create error', err)
       callback(null, {
         statusCode: 404,
         headers: { 'Content-Type': 'text/plain' },

@@ -1,7 +1,4 @@
-// import {wallet} from '@cityofzion/neon-js';
-
 export function generateUri(address, properties) {
-	// if (!address || !wallet.isAddress(address)) {
 	if (!address) {
   	return;
 	}

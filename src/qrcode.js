@@ -3,6 +3,7 @@ import dataUriToBuffer from 'data-uri-to-buffer';
 import QRCode from 'qrcode';
 import path from 'path';
 import cachePromise from './cache-promise';
+import nep5 from './nep5';
 
 function createImageFromDataUri(dataUri) {
   return new Promise((resolve) => {
@@ -33,7 +34,8 @@ function fetchLogo(_logoPath, isLocal) {
   if (isLocal) {
     _logoPath = _logoPath[0] === '/' || _logoPath[0] === '\\' ? _logoPath : path.resolve(__dirname, _logoPath);
   }
-  return Jimp.read(_logoPath);
+  return Jimp.read(_logoPath)
+  .catch(() => Jimp.read('https://cdn.o3.network/img/nep5icons/NEO.png'));
 }
 
 function resizeSquared(img, _w, _h) {
@@ -53,25 +55,30 @@ function resizeSquared(img, _w, _h) {
 function getResizedLogo({
   src, w, h, ignoreCache = false, isLocal
 }) {
-  console.log('getResizedLogo')
   if (ignoreCache) {
     return fetchLogo(src, isLocal).then(img => resizeSquared(img, w, h));
   }
-  console.log('getResizedLogo, ignoreCache')
   const resizedLogoKey = `${w}x${h}-${src}`;
   return cacheLogoResized.getAsync(resizedLogoKey, async () => {
-    console.log('getResizedLogo, cacheLogoResized')
     const logoFullImg = await cacheLogo.getAsync(src, () => fetchLogo(src, isLocal));
-    console.log('getResizedLogo, logoFullImg')
     return resizeSquared(logoFullImg.clone(), w, h);
   });
 }
 
-export default function generate({uri, logoUrl, qrCodeOptions, ratio}) {
-  console.log('generate')
+function getLogoUrl(asset) {
+  if (!asset) {
+    return 'https://cdn.o3.network/img/nep5icons/NEO.png';
+  } else if (asset.toLowerCase() === 'neo' || asset.toLowerCase() === 'gas') {
+    return `https://cdn.o3.network/img/nep5icons/${asset.toUpperCase()}.png`;
+  } else {
+    const symbol = nep5[asset] || 'NEO';
+    return `https://cdn.o3.network/img/nep5icons/${symbol.toUpperCase()}.png`;
+  }
+}
+
+export default function generate({uri, asset, qrCodeOptions, ratio}) {
   return createQRCode(uri, qrCodeOptions)
   .then(img => {
-    console.log('createQRCode')
     return Promise.all([
       img,
       getResizedLogo({
@@ -81,18 +88,16 @@ export default function generate({uri, logoUrl, qrCodeOptions, ratio}) {
         isLocal: true,
       }),
       getResizedLogo({
-        src: logoUrl,
+        src: getLogoUrl(asset),
         w: Math.floor(img.bitmap.width / ratio),
         h: Math.floor(img.bitmap.height / ratio),
       }),
     ])
     .catch(err => {
-      console.log('Promise.all', err)
       throw err
     })
   })
   .then(data => {
-    console.log('getResizedLogo & getResizedLogo')
     const img = data[0]
     const logoBg = data[1]
     const logo = data[2]
@@ -110,11 +115,8 @@ export default function generate({uri, logoUrl, qrCodeOptions, ratio}) {
     const qrImg = qrBgImg.composite(logo, x, y);
 
     return new Promise((resolve, reject) => {
-      console.log('getBuffer before')
       qrImg.getBuffer(Jimp.MIME_PNG, (err, buf) => {
-        console.log('getBuffer after')
         if (err) return rej(err);
-        console.log('getBuffer fine')
         return resolve(buf);
       });
     });
