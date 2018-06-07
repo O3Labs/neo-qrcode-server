@@ -1,4 +1,4 @@
-service: neo-qrcode
+service: neo-qrcode-1
 
 plugins:
     - serverless-apigw-binary
@@ -7,7 +7,7 @@ plugins:
 custom:
     apigwBinary:
         types:
-            - 'image/jpeg'
+            - '*/*'
 
 provider:
     name: aws
@@ -19,6 +19,6 @@ functions:
         handler: handler.hello
         events:
             - http:
-                  path: /{address}
+                  path: /frog
                   method: get
                   contentHandling: CONVERT_TO_BINARY
