@@ -2,7 +2,7 @@
 
 const neoQrCodeNode = require('./lib/index.js');
 
-module.exports.hello = (event, context, callback) => {
+module.exports.generateNEP9 = (event, context, callback) => {
 
   const maxAge = 31557600;
   const ratio = 3.5;
@@ -46,7 +46,10 @@ module.exports.hello = (event, context, callback) => {
       const response = {
         "isBase64Encoded": true,
         "statusCode": 200,
-        "headers": { 'Content-Type': 'image/png' },
+        "headers": {
+          'Content-Type': 'image/png',
+          'Cache-Control': 'public, max-age=31536000'
+        },
         "body": imgBuffer.toString('base64')
       }
 

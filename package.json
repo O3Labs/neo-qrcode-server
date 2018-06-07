@@ -9,16 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nickfujita/neo-qrcode-server.git"
+    "url": "git+https://github.com/o3labs/neo-qrcode-server.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "nick@o3.network",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nickfujita/neo-qrcode-server/issues"
+    "url": "https://github.com/o3labs/neo-qrcode-server/issues"
   },
-  "homepage": "https://github.com/nickfujita/neo-qrcode-server#readme",
+  "homepage": "https://github.com/o3labs/neo-qrcode-server#readme",
   "dependencies": {
-    "@cityofzion/neon-js": "^3.8.1",
     "data-uri-to-buffer": "^2.0.0",
     "express": "^4.16.3",
     "jimp": "^0.2.28",
@@ -33,7 +32,6 @@
     "babelrc-rollup": "^3.0.0",
     "rollup": "^0.60.0",
     "rollup-plugin-babel": "^3.0.4",
-    "serverless-apigw-binary": "^0.4.4",
-    "serverless-apigwy-binary": "^0.1.0"
+    "serverless-apigw-binary": "^0.4.4"
   }
 }

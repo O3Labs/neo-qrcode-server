@@ -1,4 +1,4 @@
-service: neo-qrcode-1
+service: neo-qrcode
 
 plugins:
     - serverless-apigw-binary
@@ -14,8 +14,8 @@ provider:
     runtime: nodejs6.10
 
 functions:
-    hello:
-        handler: handler.hello
+    nep9:
+        handler: handler.generateNEP9
         events:
             - http:
                   path: /{address}
