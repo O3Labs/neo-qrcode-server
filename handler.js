@@ -44,7 +44,7 @@ module.exports.hello = (event, context, callback) => {
     .then(imgBuffer => {
 
       const response = {
-        // "isBase64Encoded": true,
+        "isBase64Encoded": true,
         "statusCode": 200,
         "headers": { 'Content-Type': 'image/png' },
         "body": imgBuffer.toString('base64')

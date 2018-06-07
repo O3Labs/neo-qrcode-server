@@ -1,5 +1,14 @@
 service: neo-qrcode
 
+plugins:
+    - serverless-apigw-binary
+    - serverless-apigwy-binary
+
+custom:
+    apigwBinary:
+        types:
+            - 'image/jpeg'
+
 provider:
     name: aws
     region: ap-northeast-1
@@ -12,3 +21,4 @@ functions:
             - http:
                   path: /{address}
                   method: get
+                  contentHandling: CONVERT_TO_BINARY
