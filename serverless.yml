@@ -1,0 +1,22 @@
+service: neo-qrcode
+
+plugins:
+    - serverless-apigw-binary
+
+custom:
+    apigwBinary:
+        types:
+            - '*/*'
+
+provider:
+    name: aws
+    region: ap-northeast-1
+    runtime: nodejs6.10
+
+functions:
+    nep9:
+        handler: handler.generateNEP9
+        events:
+            - http:
+                  path: /{address}
+                  method: get

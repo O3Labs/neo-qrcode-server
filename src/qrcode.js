@@ -3,6 +3,7 @@ import dataUriToBuffer from 'data-uri-to-buffer';
 import QRCode from 'qrcode';
 import path from 'path';
 import cachePromise from './cache-promise';
+import nep5 from './nep5';
 
 function createImageFromDataUri(dataUri) {
   return new Promise((resolve) => {
@@ -33,7 +34,8 @@ function fetchLogo(_logoPath, isLocal) {
   if (isLocal) {
     _logoPath = _logoPath[0] === '/' || _logoPath[0] === '\\' ? _logoPath : path.resolve(__dirname, _logoPath);
   }
-  return Jimp.read(_logoPath);
+  return Jimp.read(_logoPath)
+  .catch(() => Jimp.read('https://cdn.o3.network/img/nep5icons/NEO.png'));
 }
 
 function resizeSquared(img, _w, _h) {
@@ -56,7 +58,6 @@ function getResizedLogo({
   if (ignoreCache) {
     return fetchLogo(src, isLocal).then(img => resizeSquared(img, w, h));
   }
-
   const resizedLogoKey = `${w}x${h}-${src}`;
   return cacheLogoResized.getAsync(resizedLogoKey, async () => {
     const logoFullImg = await cacheLogo.getAsync(src, () => fetchLogo(src, isLocal));
@@ -64,22 +65,38 @@ function getResizedLogo({
   });
 }
 
-export default function generate({uri, logoUrl, qrCodeOptions, ratio}) {
+function getLogoUrl(asset) {
+  if (!asset) {
+    return 'https://cdn.o3.network/img/nep5icons/NEO.png';
+  } else if (asset.toLowerCase() === 'neo' || asset.toLowerCase() === 'gas') {
+    return `https://cdn.o3.network/img/nep5icons/${asset.toUpperCase()}.png`;
+  } else {
+    const symbol = nep5[asset] || 'NEO';
+    return `https://cdn.o3.network/img/nep5icons/${symbol.toUpperCase()}.png`;
+  }
+}
+
+export default function generate({uri, asset, qrCodeOptions, ratio}) {
   return createQRCode(uri, qrCodeOptions)
-  .then(img => Promise.all([
-    img,
-    getResizedLogo({
-      src: './assets/blankSquare.png',
-      w: Math.floor(img.bitmap.width / (ratio - 0.5)),
-      h: Math.floor(img.bitmap.height / (ratio - 0.5)),
-      isLocal: true,
-    }),
-    getResizedLogo({
-      src: logoUrl,
-      w: Math.floor(img.bitmap.width / ratio),
-      h: Math.floor(img.bitmap.height / ratio),
-    }),
-  ]))
+  .then(img => {
+    return Promise.all([
+      img,
+      getResizedLogo({
+        src: '../assets/blankSquare.png',
+        w: Math.floor(img.bitmap.width / (ratio - 0.5)),
+        h: Math.floor(img.bitmap.height / (ratio - 0.5)),
+        isLocal: true,
+      }),
+      getResizedLogo({
+        src: getLogoUrl(asset),
+        w: Math.floor(img.bitmap.width / ratio),
+        h: Math.floor(img.bitmap.height / ratio),
+      }),
+    ])
+    .catch(err => {
+      throw err
+    })
+  })
   .then(data => {
     const img = data[0]
     const logoBg = data[1]

@@ -1,11 +1,14 @@
-import {wallet} from '@cityofzion/neon-js';
-
 export function generateUri(address, properties) {
-	if (!address || !wallet.isAddress(address)) {
+	if (!address) {
   	return;
 	}
 
-  return `neo:${address}${serializeQuery(properties)}`;
+	let output = `neo:${address}`
+	if (properties) {
+		output += serializeQuery(properties);
+	}
+
+  return output;
 }
 
 function serializeQuery(query) {
@@ -16,5 +19,5 @@ function serializeQuery(query) {
     return accum;
   }, []);
 
-	return parameters.length && `?${parameters.join('&')}`;
+	return parameters.length ? `?${parameters.join('&')}` : '';
 }
